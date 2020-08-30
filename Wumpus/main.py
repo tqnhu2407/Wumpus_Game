@@ -24,7 +24,7 @@ def import_map(filename):
     file = open(filename, 'r')
 
     data = file.readline().strip().split('.')
-    n = int(data[0])
+    n = 10
     map = []
 
     for i in range(n):
@@ -183,9 +183,7 @@ class main_loop():
                 if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score, 'Game over!')
-                elif self.new_format_map[self.y // 75][self.x // 75][1] == 4:
-                    self.score += 100
-                    game_over(self.score, '  Win!!!  ')
+                self.climb_out()
                 self.score -= 10
                 self.player_img = self.player_img_left
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
@@ -204,9 +202,7 @@ class main_loop():
                 if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score, 'Game over!')
-                elif self.new_format_map[self.y // 75][self.x // 75][1] == 4:
-                    self.score += 100
-                    game_over(self.score, '  Win!!!  ')
+                self.climb_out()
                 self.score -= 10
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
             x_room = int(self.y // 75)
@@ -224,9 +220,7 @@ class main_loop():
                 if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score, 'Game over!')
-                elif self.new_format_map[self.y // 75][self.x // 75][1] == 4:
-                    self.score += 100
-                    game_over(self.score, '  Win!!!  ')
+                self.climb_out()
                 self.score -= 10
                 self.player_img = self.player_img_up
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
@@ -245,9 +239,7 @@ class main_loop():
                 if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score, 'Game over!')
-                elif self.new_format_map[self.y // 75][self.x // 75][1] == 4:
-                    self.score += 100
-                    game_over(self.score, '  Win!!!  ')
+                self.climb_out()
                 self.score -= 10
                 self.player_img = self.player_img_down
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
@@ -255,8 +247,8 @@ class main_loop():
             y_room = int(self.x // 75)
             self.dir = logic.update_dir(self.new_format_map, x_room, y_room)
 
-    def take_gold(self, keys1):
-        if (keys1[pygame.K_RETURN]) and self.new_format_map[self.y // 75][self.x // 75][1] == 1:
+    def take_gold(self):
+        if self.new_format_map[self.y // 75][self.x // 75][1] == 1:
             self.new_format_map[self.y // 75][self.x // 75][1] = 0
             self.score += 100
     
@@ -300,10 +292,10 @@ class main_loop():
             self.stench_disappear(self.y // 75, self.x // 75 + 1)
             self.score -= 100
     
-    def climb_out(self, keys1):
-        if (keys1[pygame.K_RETURN]) and self.new_format_map[self.y // 75][self.x // 75] == [1, 4, 0]:
-            self.score += 10
-            game_over(self.score)
+    def climb_out(self):
+        if self.new_format_map[self.y // 75][self.x // 75][1] == 4:
+            self.score += 100
+            game_over(self.score, '    Win!!!')
     
     def game_run(self):
         running = True
@@ -314,10 +306,7 @@ class main_loop():
                     running = False
                 #keys1 = pygame.key.get_pressed()
                 #self.move_by_keyboard(keys1)
-                #self.take_gold(keys1)
                 #self.shoot_arrow(keys1)
-                #self.climb_out(keys1)
-
 
             for i in range(0, len(self.new_format_map)):
                 for j in range(0, len(self.new_format_map[0])):
@@ -367,8 +356,9 @@ class main_loop():
             self. generate_object(self.player_img, self.x, self.y)
             pygame.display.update()
             
-            mytime.sleep(0.1)
+            mytime.sleep(0.5)
             self.move_by_command(self.dir)
+            self.take_gold()
 
 def menu_config():
     # change title and logo
