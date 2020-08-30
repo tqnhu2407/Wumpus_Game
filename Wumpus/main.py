@@ -182,7 +182,10 @@ class main_loop():
                     return
                 if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
-                    game_over(self.score)
+                    game_over(self.score, 'Game over!')
+                elif self.new_format_map[self.y // 75][self.x // 75][1] == 4:
+                    self.score += 100
+                    game_over(self.score, '  Win!!!  ')
                 self.score -= 10
                 self.player_img = self.player_img_left
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
@@ -200,7 +203,10 @@ class main_loop():
                     return
                 if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
-                    game_over(self.score)
+                    game_over(self.score, 'Game over!')
+                elif self.new_format_map[self.y // 75][self.x // 75][1] == 4:
+                    self.score += 100
+                    game_over(self.score, '  Win!!!  ')
                 self.score -= 10
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
             x_room = int(self.y // 75)
@@ -217,7 +223,10 @@ class main_loop():
                     return
                 if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
-                    game_over(self.score)
+                    game_over(self.score, 'Game over!')
+                elif self.new_format_map[self.y // 75][self.x // 75][1] == 4:
+                    self.score += 100
+                    game_over(self.score, '  Win!!!  ')
                 self.score -= 10
                 self.player_img = self.player_img_up
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
@@ -235,7 +244,10 @@ class main_loop():
                     return
                 if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
-                    game_over(self.score)
+                    game_over(self.score, 'Game over!')
+                elif self.new_format_map[self.y // 75][self.x // 75][1] == 4:
+                    self.score += 100
+                    game_over(self.score, '  Win!!!  ')
                 self.score -= 10
                 self.player_img = self.player_img_down
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
@@ -488,7 +500,7 @@ def main_menu():
         pygame.display.update()
         mainClock.tick(60)
 
-def game_over(score):
+def game_over(score, noti):
     waiting = True
     screen = pygame.display.set_mode((750, 750), 0)
 
@@ -499,7 +511,7 @@ def game_over(score):
         pygame.draw.rect(screen, white, play_again)
         pygame.draw.rect(screen, white, quit)
 
-        draw_text("Game over!", GO_font, blue, screen, 143, 75)
+        draw_text(noti, GO_font, blue, screen, 143, 75)
         draw_text("Score: " + str(score), score_show, black, screen, 195, 250)
         draw_text("Play again", menu_font, red, screen, 230, 400)
         draw_text("Exit", menu_font, red, screen, 323, 510)
@@ -525,6 +537,7 @@ def game_over(score):
                 sys.exit()
         pygame.display.update()
         mainClock.tick(60)
+
 
 
 main_menu()

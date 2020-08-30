@@ -306,7 +306,6 @@ def find_way_out(rooms, x, y):
                 door = step['Current']
                 path_found.insert(0, door)
     
-    print(f'find_way_out: path_found = {path_found}')
     return path_found
 
 
