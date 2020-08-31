@@ -116,7 +116,7 @@ class main_loop():
 
         self.score = 0
 
-        self.screen = pygame.display.set_mode((750, 750))
+        self.screen = pygame.display.set_mode((900, 750))
     #create object on screen
     def generate_object(self, obj_img, x, y):
         self.screen.blit(obj_img, (x, y))
@@ -363,18 +363,17 @@ class main_loop():
                         self.generate_object(self.stench_img, j * 75, i * 75)
                         self.generate_object(self.breeze_img, j * 75, i * 75)
 
+            mytime.sleep(0.2)
+            self.move_by_command(self.dir)
+            self.take_gold()
+            self. generate_object(self.player_img, self.x, self.y)
+
             for i in range(0, len(self.new_format_map)):
                 for j in range(0, len(self.new_format_map[0])):
                     if self.new_format_map[i][j][0] == 0:
                         self.generate_object(self.fog_img, j * 75, i * 75)
 
-            self. generate_object(self.player_img, self.x, self.y)
             pygame.display.update()
-            
-            mytime.sleep(0.1)
-            self.move_by_command(self.dir)
-            self.take_gold()
-
 def menu_config():
     # change title and logo
     pygame.display.set_caption("Wumpus")
