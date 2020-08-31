@@ -11,6 +11,7 @@ import logic
 pygame.init()
 score_show = pygame.font.Font('font1.ttf', 50)
 score_font = pygame.font.Font('font1.ttf', 30)
+gold_font = pygame.font.Font('font1.ttf', 25)
 menu_font = pygame.font.Font('font1.ttf', 45)
 GO_font = pygame.font.Font('font1.ttf', 70)
 mainClock = pygame.time.Clock()
@@ -54,6 +55,7 @@ class main_loop():
     def __init__(self, path):
         self.n, self.map = import_map(path)
         self.new_format_map = []
+        self.gold = 0
         for x in range(0, len(self.map)):
             self.new_format_map.append([])
             for _ in range(0, len(self.map[0])):
@@ -69,12 +71,16 @@ class main_loop():
                 if self.map[i][j] == '-':
                     self.new_format_map[i][j] = [0, 0, 0]
                 if self.map[i][j] == 'G':
+                    self.gold += 1
                     self.new_format_map[i][j] = [0, 1, 0]
                 if self.map[i][j] == 'BG':
+                    self.gold += 1
                     self.new_format_map[i][j] = [0, 1, 1]
                 if self.map[i][j] == 'SG':
+                    self.gold += 1
                     self.new_format_map[i][j] = [0, 1, 2]
                 if self.map[i][j] == 'BSG':
+                    self.gold += 1
                     self.new_format_map[i][j] = [0, 1, 3]
                 if self.map[i][j] == 'W':
                     self.new_format_map[i][j] = [0, 3, 0]
@@ -251,7 +257,7 @@ class main_loop():
         if self.new_format_map[self.y // 75][self.x // 75][1] == 1:
             self.new_format_map[self.y // 75][self.x // 75][1] = 0
             self.score += 100
-            print(f'Gold taken at ({int(self.y//75)}, {int(self.x//75)})')
+            self.gold -= 1
     
     def stench_disappear(self, wx, wy):
         if self.new_format_map[wx - 1][wy][2] == 3:
@@ -301,7 +307,15 @@ class main_loop():
     def game_run(self):
         running = True
         while running:
+            
+            screen.fill(black)
+            draw_text("Score", gold_font, red, screen, 782, 20)
+            draw_text(str(self.score), menu_font, red, screen, 780, 70)
 
+            draw_text("Remaining", gold_font, red, screen, 750, 150)
+            draw_text("golds", gold_font, red, screen, 785, 190)
+            draw_text(str(self.gold), menu_font, red, screen, 805, 230)
+            
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
@@ -357,7 +371,7 @@ class main_loop():
             self. generate_object(self.player_img, self.x, self.y)
             pygame.display.update()
             
-            mytime.sleep(0.05)
+            mytime.sleep(0.1)
             self.move_by_command(self.dir)
             self.take_gold()
 

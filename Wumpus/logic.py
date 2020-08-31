@@ -147,7 +147,7 @@ def update_KB(rooms, x, y):
     for row in range(10):
         print(f'{row} {W[row]}')
     '''
-    
+
 
 def is_a_room(x, y): 
     '''
