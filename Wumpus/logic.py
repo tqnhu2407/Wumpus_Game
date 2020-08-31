@@ -32,6 +32,8 @@ BREEZE = 1
 STENCH = 2
 BREEZE_STENCH = 3
 
+B, S, P, W, visited = [], [], [], [], []
+
 def print_obj(rooms, x, y):
     curr_room = rooms[x][y]
     print(f'Room ({x}, {y})')
@@ -39,24 +41,27 @@ def print_obj(rooms, x, y):
         print(curr_room[i])
 
 
-B, S, P, W, visited = [], [], [], [], []
-
-for i in range(10):
-    B.append([])
-    S.append([])
-    P.append([])
-    W.append([])
-    visited.append([])
-    for j in range(10):
-        B[i].append('UNK')
-        S[i].append('UNK')
-        P[i].append('UNK')
-        W[i].append('UNK')
-        visited[i].append(False)
+def init_KB():
+    
+    global B, S, P, W, visited
+    B, S, P, W, visited = [], [], [], [], []
+    for i in range(10):
+        B.append([])
+        S.append([])
+        P.append([])
+        W.append([])
+        visited.append([])
+        for j in range(10):
+            B[i].append('UNK')
+            S[i].append('UNK')
+            P[i].append('UNK')
+            W[i].append('UNK')
+            visited[i].append(False)
 
 
 def update_KB(rooms, x, y):
     
+    global B, S, P, W, visited
     curr_room = rooms[x][y]
     visited[x][y] = True
     
@@ -105,8 +110,8 @@ def update_KB(rooms, x, y):
             W[x + 1][y] = 'MAYBE'
     
     if curr_room[2] == BREEZE_STENCH:
-        B[i][j] = 'TRUE'
-        S[i][j] = 'TRUE'
+        B[x][y] = 'TRUE'
+        S[x][y] = 'TRUE'
         if is_a_room(x, y-1) and P[x][y - 1] == 'UNK': # left
             P[x][y - 1] = 'MAYBE'
         if is_a_room(x, y+1) and P[x][y + 1] == 'UNK': # right
@@ -184,6 +189,8 @@ def find_nearest_saferoom(rooms, x, y):
 
 
 def is_saferoom(x, y):
+
+    global B, S, P, W, visited
     if visited[x][y] and W[x][y] == 'FALSE' and P[x][y] == 'FALSE' and B[x][y] == 'FALSE' and S[x][y] == 'FALSE':
         return True
     return False
@@ -232,6 +239,8 @@ def find_nearest_unkroom(rooms, x, y):
     path_found = [target_unkroom]
     if not target_unkroom:
         path_found = find_way_out(rooms, x, y)
+        if len(path_found) == 1:
+            return 'ENTER'
     else:
         while target_unkroom != start_room:
             for step in path:
@@ -255,6 +264,7 @@ def find_nearest_unkroom(rooms, x, y):
 
 
 def is_unkroom(x, y):
+    global B, S, P, W, visited
     if not visited[x][y] and W[x][y] == 'UNK' and P[x][y] == 'UNK' and B[x][y] == 'UNK' and S[x][y] == 'UNK':
         return True
     return False
