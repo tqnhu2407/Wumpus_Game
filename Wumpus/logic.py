@@ -61,17 +61,25 @@ def init_KB():
 
 def update_KB(rooms, x, y):
     
+    print('')
+    print(f'The Agent is in room({y+ 1}, {10 - x})')
+    
     global B, S, P, W, visited
     curr_room = rooms[x][y]
     visited[x][y] = True
     
+    if curr_room[1] == GOLD:
+        print('There is a GOLD here!')
+    
     if curr_room[1] == PIT:
+        print('There is a Pit here')
         P[x][y] = 'TRUE'
         return
     elif curr_room[1] != PIT:
         P[x][y] = 'FALSE'
      
     if curr_room[1] == WUMPUS:
+        print('There is a Wumpus here')
         W[x][y] = 'TRUE'
         return
     elif curr_room[1] != WUMPUS:
@@ -82,10 +90,12 @@ def update_KB(rooms, x, y):
         W[x][y] = 'FALSE'
     
     if curr_room[2] == NO_SIGNAL:
+        print('There is no Breeze or Stench here')
         B[x][y] = 'FALSE'
         S[x][y] = 'FALSE'
     
     if curr_room[2] == BREEZE:
+        print('There is Breeze here')
         B[x][y] = 'TRUE'
         S[x][y] = 'FALSE'
         if is_a_room(x, y-1) and P[x][y - 1] == 'UNK': # left
@@ -98,6 +108,7 @@ def update_KB(rooms, x, y):
             P[x + 1][y] = 'MAYBE'
         
     if curr_room[2] == STENCH:
+        print('There is Stench here')
         S[x][y] = 'TRUE'
         B[x][y] = 'FALSE'
         if is_a_room(x, y-1) and W[x][y - 1] == 'UNK': # left
@@ -110,6 +121,7 @@ def update_KB(rooms, x, y):
             W[x + 1][y] = 'MAYBE'
     
     if curr_room[2] == BREEZE_STENCH:
+        print('There are both Breeze and Stench here')
         B[x][y] = 'TRUE'
         S[x][y] = 'TRUE'
         if is_a_room(x, y-1) and P[x][y - 1] == 'UNK': # left
@@ -127,26 +139,7 @@ def update_KB(rooms, x, y):
         if is_a_room(x-1, y) and W[x - 1][y] == 'UNK': # up
             W[x - 1][y] = 'MAYBE'
         if is_a_room(x+1, y) and W[x + 1][y] == 'UNK': # down       
-            W[x + 1][y] = 'MAYBE'    
-    
-    '''
-    print(f'    The agent is in ({x}, {y})')
-    print('    visited')
-    for row in range(10):
-        print(f'{row} {visited[row]}')
-    print('     B')
-    for row in range(10):
-        print(f'{row} {B[row]}')
-    print('     S')
-    for row in range(10):
-        print(f'{row} {S[row]}')
-    print('     P')
-    for row in range(10):
-        print(f'{row} {P[row]}')
-    print('     W')
-    for row in range(10):
-        print(f'{row} {W[row]}')
-    '''
+            W[x + 1][y] = 'MAYBE'
 
 
 def is_a_room(x, y): 
@@ -160,17 +153,19 @@ def is_a_room(x, y):
 
 def update_dir(rooms, x, y): # Check the current position and infer the next room to go
     
+    global B, S, P, W, visited
     update_KB(rooms, x, y)
     curr_room = rooms[x][y]
     '''
     Choose which room to go
     '''
     new_dir = 'UP' # defauld :D
+
     if curr_room[2] != NO_SIGNAL: # Have a signal
         new_dir = find_nearest_saferoom(rooms, x, y)
-    if is_saferoom(x, y): # If this room is already safe
+    elif is_saferoom(x, y): # If this room is already safe
         new_dir = find_nearest_unkroom(rooms, x, y)
-
+    print(f'Action: {new_dir}')
     return new_dir
 
 

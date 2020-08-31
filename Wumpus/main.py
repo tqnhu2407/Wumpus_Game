@@ -193,6 +193,7 @@ class main_loop():
                 self.score -= 10
                 self.player_img = self.player_img_left
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
+                
             x_room = int(self.y // 75)
             y_room = int(self.x // 75)
             self.dir = logic.update_dir(self.new_format_map, x_room, y_room)
@@ -251,6 +252,7 @@ class main_loop():
             self.dir = logic.update_dir(self.new_format_map, x_room, y_room)
         
         if command == 'ENTER':
+            print('Action: Escaped')
             self.climb_out()
 
     def take_gold(self):
