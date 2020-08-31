@@ -16,8 +16,7 @@ menu_font = pygame.font.Font('font1.ttf', 45)
 GO_font = pygame.font.Font('font1.ttf', 70)
 mainClock = pygame.time.Clock()
 
-# Import a maze from file name
-# Return (n, m, 2D_array_maze, pacman_i, pacman_j)
+
 def import_map(filename):
     if (not os.path.exists(filename)):
         return (0, 0, None)
@@ -36,13 +35,14 @@ def import_map(filename):
 
     return (n, map)
 
-#create screen background, logo, title
+
+# create screen background, logo, title
 global screen
 screen = pygame.display.set_mode((750, 750))
 pygame.display.set_caption("Wumpus")
 logo = pygame.image.load('icon1.png')
 pygame.display.set_icon(logo)
-#Color
+# Color
 black = (0, 0, 0)
 white = (255, 255, 255)
 red = (255, 0, 0)
@@ -50,16 +50,22 @@ lemon = (239, 253, 95)
 green = (0, 255, 0)
 blue = (0, 0, 255)
 
+
 class main_loop():
 
     def __init__(self, path):
         self.n, self.map = import_map(path)
         self.new_format_map = []
+        self.shoot_position = []
         self.gold = 0
         for x in range(0, len(self.map)):
             self.new_format_map.append([])
             for _ in range(0, len(self.map[0])):
                 self.new_format_map[x].append([])
+        for x in range(0, len(self.map)):
+            self.shoot_position.append([])
+            for _ in range(0, len(self.map[0])):
+                self.shoot_position[x].append(0)
         self.x = 0
         self.y = 0
         for i in range(0, len(self.map)):
@@ -94,7 +100,7 @@ class main_loop():
                     self.new_format_map[i][j] = [0, 0, 3]
         self.dir = 'UP'
 
-        #Load object
+        # Load object
         self.player_img = pygame.image.load('right1.png')
         self.player_img_left = pygame.image.load('left1.png')
         self.player_img_right = pygame.image.load('right1.png')
@@ -115,12 +121,14 @@ class main_loop():
         self.fog_img = pygame.image.load('fog1.jpg')
 
         self.score = 0
-
+        self.arrow = 0
         self.screen = pygame.display.set_mode((900, 750))
-    #create object on screen
+
+    # create object on screen
     def generate_object(self, obj_img, x, y):
         self.screen.blit(obj_img, (x, y))
-    #move by keyboard
+
+    # move by keyboard
     def move_by_keyboard(self, keys1):
         if keys1[pygame.K_LEFT]:
             if self.player_img != self.player_img_left:
@@ -130,7 +138,8 @@ class main_loop():
                 if self.x < 0:
                     self.x += 75
                     return
-                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
+                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or \
+                        self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score)
                 self.score -= 10
@@ -144,7 +153,8 @@ class main_loop():
                 if self.x > 675:
                     self.x -= 75
                     return
-                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
+                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or \
+                        self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score)
                 self.score -= 10
@@ -157,7 +167,8 @@ class main_loop():
                 if self.y < 0:
                     self.y += 75
                     return
-                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
+                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or \
+                        self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score)
                 self.score -= 10
@@ -171,7 +182,8 @@ class main_loop():
                 if self.y > 675:
                     self.y -= 75
                     return
-                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
+                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or \
+                        self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score)
                 self.score -= 10
@@ -187,17 +199,17 @@ class main_loop():
                 if self.x < 0:
                     self.x += 75
                     return
-                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
+                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or \
+                        self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score, 'Game over!')
                 self.score -= 10
                 self.player_img = self.player_img_left
                 self.new_format_map[self.y // 75][self.x // 75][0] = 1
-                
             x_room = int(self.y // 75)
             y_room = int(self.x // 75)
             self.dir = logic.update_dir(self.new_format_map, x_room, y_room)
-            
+
         if command == 'RIGHT':
             if self.player_img != self.player_img_right:
                 self.player_img = self.player_img_right
@@ -206,7 +218,8 @@ class main_loop():
                 if self.x > 675:
                     self.x -= 75
                     return
-                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
+                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or \
+                        self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score, 'Game over!')
                 self.score -= 10
@@ -214,7 +227,7 @@ class main_loop():
             x_room = int(self.y // 75)
             y_room = int(self.x // 75)
             self.dir = logic.update_dir(self.new_format_map, x_room, y_room)
-            
+
         if command == 'UP':
             if self.player_img != self.player_img_up:
                 self.player_img = self.player_img_up
@@ -223,7 +236,8 @@ class main_loop():
                 if self.y < 0:
                     self.y += 75
                     return
-                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
+                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or \
+                        self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score, 'Game over!')
                 self.score -= 10
@@ -232,7 +246,7 @@ class main_loop():
             x_room = int(self.y // 75)
             y_room = int(self.x // 75)
             self.dir = logic.update_dir(self.new_format_map, x_room, y_room)
-            
+
         if command == 'DOWN':
             if self.player_img != self.player_img_down:
                 self.player_img = self.player_img_down
@@ -241,7 +255,8 @@ class main_loop():
                 if self.y > 675:
                     self.y -= 75
                     return
-                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or self.new_format_map[self.y // 75][self.x // 75][1] == 3:
+                if self.new_format_map[self.y // 75][self.x // 75][1] == 2 or \
+                        self.new_format_map[self.y // 75][self.x // 75][1] == 3:
                     self.score -= 1000
                     game_over(self.score, 'Game over!')
                 self.score -= 10
@@ -250,9 +265,8 @@ class main_loop():
             x_room = int(self.y // 75)
             y_room = int(self.x // 75)
             self.dir = logic.update_dir(self.new_format_map, x_room, y_room)
-        
+
         if command == 'ENTER':
-            print('Action: Escaped')
             self.climb_out()
 
     def take_gold(self):
@@ -260,7 +274,7 @@ class main_loop():
             self.new_format_map[self.y // 75][self.x // 75][1] = 0
             self.score += 100
             self.gold -= 1
-    
+
     def stench_disappear(self, wx, wy):
         if self.new_format_map[wx - 1][wy][2] == 3:
             self.new_format_map[wx - 1][wy][2] = 1
@@ -278,38 +292,57 @@ class main_loop():
             self.new_format_map[wx][wy + 1][2] = 1
         else:
             self.new_format_map[wx][wy + 1][2] = 0
-    
-    def shoot_arrow(self, keys1):
-        if (keys1[pygame.K_SPACE]) and self.new_format_map[self.y // 75 - 1][self.x // 75][1] == 3 and self.player_img == self.player_img_up:
-            self.new_format_map[self.y // 75 - 1][self.x // 75][1] = 0
-            self.new_format_map[self.y // 75 - 1][self.x // 75][0] = 1
-            self.stench_disappear(self.y // 75 - 1, self.x // 75)
+
+    def shoot_arrow(self):
+        if self.new_format_map[self.y // 75][self.x // 75][2] == 3 or self.new_format_map[self.y // 75][self.x // 75][
+            2] == 2 and self.player_img == self.player_img_up and self.shoot_position[self.y // 75][self.x // 75] == 0:
             self.score -= 100
-        if (keys1[pygame.K_SPACE]) and self.new_format_map[self.y // 75 + 1][self.x // 75][1] == 3 and self.player_img == self.player_img_down:
-            self.new_format_map[self.y // 75 + 1][self.x // 75][1] = 0
-            self.new_format_map[self.y // 75 + 1][self.x // 75][0] = 1
-            self.stench_disappear(self.y // 75 + 1, self.x // 75)
+            self.arrow += 1
+            self.shoot_position[self.y // 75][self.x // 75] = 1
+            if self.new_format_map[self.y // 75 - 1][self.x // 75][1] == 3:
+                self.new_format_map[self.y // 75 - 1][self.x // 75][1] = 0
+                self.new_format_map[self.y // 75 - 1][self.x // 75][0] = 1
+                self.stench_disappear(self.y // 75 - 1, self.x // 75)
+                return
+        if self.new_format_map[self.y // 75][self.x // 75][2] == 3 or self.new_format_map[self.y // 75][self.x // 75][
+            2] == 2 and self.player_img == self.player_img_down and self.shoot_position[self.y // 75][self.x // 75] == 0:
             self.score -= 100
-        if (keys1[pygame.K_SPACE]) and self.new_format_map[self.y // 75][self.x // 75 - 1][1] == 3 and self.player_img == self.player_img_left:
-            self.new_format_map[self.y // 75][self.x // 75 - 1][1] = 0
-            self.new_format_map[self.y // 75][self.x // 75 - 1][0] = 1
-            self.stench_disappear(self.y // 75, self.x // 75 - 1)
+            self.arrow += 1
+            self.shoot_position[self.y // 75][self.x // 75] = 1
+            if self.new_format_map[self.y // 75 + 1][self.x // 75][1] == 3:
+                self.new_format_map[self.y // 75 + 1][self.x // 75][1] = 0
+                self.new_format_map[self.y // 75 + 1][self.x // 75][0] = 1
+                self.stench_disappear(self.y // 75 + 1, self.x // 75)
+                return
+        if self.new_format_map[self.y // 75][self.x // 75][2] == 3 or self.new_format_map[self.y // 75][self.x // 75][
+            2] == 2 and self.player_img == self.player_img_left and self.shoot_position[self.y // 75][self.x // 75] == 0:
             self.score -= 100
-        if (keys1[pygame.K_SPACE]) and self.new_format_map[self.y // 75][self.x // 75 + 1][1] == 3 and self.player_img == self.player_img_right:
-            self.new_format_map[self.y // 75][self.x // 75 + 1][1] = 0
-            self.new_format_map[self.y // 75][self.x // 75 + 1][0] = 1
-            self.stench_disappear(self.y // 75, self.x // 75 + 1)
+            self.arrow += 1
+            self.shoot_position[self.y // 75][self.x // 75] = 1
+            if self.new_format_map[self.y // 75][self.x // 75 - 1][1] == 3:
+                self.new_format_map[self.y // 75][self.x // 75 - 1][1] = 0
+                self.new_format_map[self.y // 75][self.x // 75 - 1][0] = 1
+                self.stench_disappear(self.y // 75, self.x // 75 - 1)
+                return
+        if self.new_format_map[self.y // 75][self.x // 75][2] == 3 or self.new_format_map[self.y // 75][self.x // 75][
+            2] == 2 and self.player_img == self.player_img_right and self.shoot_position[self.y // 75][self.x // 75] == 0:
             self.score -= 100
-    
+            self.arrow += 1
+            self.shoot_position[self.y // 75][self.x // 75] = 1
+            if self.new_format_map[self.y // 75][self.x // 75 + 1][1] == 3:
+                self.new_format_map[self.y // 75][self.x // 75 + 1][1] = 0
+                self.new_format_map[self.y // 75][self.x // 75 + 1][0] = 1
+                self.stench_disappear(self.y // 75, self.x // 75 + 1)
+                return
     def climb_out(self):
         if self.new_format_map[self.y // 75][self.x // 75][1] == 4:
             self.score += 10
             game_over(self.score, '    Win!!!')
-    
+
     def game_run(self):
         running = True
         while running:
-            
+
             screen.fill(black)
             draw_text("Score", gold_font, red, screen, 782, 20)
             draw_text(str(self.score), menu_font, red, screen, 780, 70)
@@ -317,13 +350,13 @@ class main_loop():
             draw_text("Remaining", gold_font, red, screen, 750, 150)
             draw_text("golds", gold_font, red, screen, 785, 190)
             draw_text(str(self.gold), menu_font, red, screen, 805, 230)
-            
+
+            draw_text("Arrows", gold_font, red, screen, 750, 310)
+            draw_text("shooted", gold_font, red, screen, 785, 340)
+            draw_text(str(self.arrow), menu_font, red, screen, 805, 380)
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-                #keys1 = pygame.key.get_pressed()
-                #self.move_by_keyboard(keys1)
-                #self.shoot_arrow(keys1)
 
             for i in range(0, len(self.new_format_map)):
                 for j in range(0, len(self.new_format_map[0])):
@@ -368,7 +401,8 @@ class main_loop():
             mytime.sleep(0.2)
             self.move_by_command(self.dir)
             self.take_gold()
-            self. generate_object(self.player_img, self.x, self.y)
+            self.shoot_arrow()
+            self.generate_object(self.player_img, self.x, self.y)
 
             for i in range(0, len(self.new_format_map)):
                 for j in range(0, len(self.new_format_map[0])):
@@ -376,6 +410,8 @@ class main_loop():
                         self.generate_object(self.fog_img, j * 75, i * 75)
 
             pygame.display.update()
+
+
 def menu_config():
     # change title and logo
     pygame.display.set_caption("Wumpus")
@@ -384,11 +420,13 @@ def menu_config():
     menu_img = pygame.image.load('wumpus.png')
     screen.blit(menu_img, (0, 0))
 
+
 def draw_text(text, font, color, surface, x, y):
     textobj = font.render(text, 1, color)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
     surface.blit(textobj, textrect)
+
 
 def map_selection_menu():
     map_run = True
@@ -451,7 +489,6 @@ def map_selection_menu():
                 logic.init_KB()
                 game.game_run()
 
-
         if map_4.collidepoint((mx, my)):
             if click:
                 path = 'maps\\map4.txt'
@@ -470,9 +507,9 @@ def map_selection_menu():
             if click:
                 map_run = False
 
-
         pygame.display.update()
         mainClock.tick(60)
+
 
 def main_menu():
     while True:
@@ -509,6 +546,7 @@ def main_menu():
 
         pygame.display.update()
         mainClock.tick(60)
+
 
 def game_over(score, noti):
     waiting = True
@@ -547,8 +585,6 @@ def game_over(score, noti):
                 sys.exit()
         pygame.display.update()
         mainClock.tick(60)
-
-
 
 
 main_menu()
